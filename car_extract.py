@@ -40,5 +40,3 @@ car_image = mping.imread(car_filename[0])
 print('car images: ', num_car_image)
 print('not car images: ', not_car_image)
 print('Image shape{} and type {}'.format(car_image.shape, car_image.dtype))
-
-ShowImage('test', car_image, 1)
