@@ -9,7 +9,7 @@ import pickle
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
-# from scipy.ndimage.measurements import label
+from scipy.ndimage.measurements import label
 # from moviepy.editor import VideoFileClip
 
 
@@ -422,6 +422,45 @@ def convert_color(img, conv='RGB2YCrCb'):
         return cv2.cvtColor(img, cv2.COLOR_RGB2LUV)
 
 
+# 热度图
+def add_heat(heatmap, bbox_list):
+    for box_item in bbox_list:
+        # 每出现一个框，热度图加1
+        heatmap[box_item[0][1]:box_item[1][1], box_item[0][0]:box_item[1][0]] += 1
+    return heatmap
+
+
+def apply_threshold(heatmap, threshold_):
+    # 小于阈值的热度图置0
+    heatmap[heatmap < threshold_] = 0
+    # 返回热度图
+    return heatmap
+
+
+# 画框
+def draw_labeled_bboxes(img, labels_):
+    for car_number in range(1, labels_[1] + 1):
+        nonzero = (labels_[0] == car_number).nonzero()
+        nonzeroy = np.array(nonzero[0])
+        nonzerox = np.array(nonzero[1])
+        bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox), np.max(nonzeroy)))
+        cv2.rectangle(img, bbox[0], bbox[1], (255, 0, 0), 2)
+        cv2.putText(img, 'car_{}'.format(car_number), (bbox[0][0]+5, bbox[0][1]-10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 255), 1, cv2.LINE_AA)
+    return img
+
+
+def draw_labeled_windows(image, boxes, threshold_=2):
+    heat = np.zeros_like(image[:, :, 0]).astype(np.float)
+    heat = add_heat(heat, boxes)
+    heat = apply_threshold(heat, threshold_)
+    heatmap = np.clip(heat, 0, 255)
+    # 给剩下的热图打标签，相当于统计车的数量
+    labels_ = label(heatmap)
+    draw_img = draw_labeled_bboxes(np.copy(image), labels_)
+    return heatmap, labels_, draw_img
+
+
 # Main Code
 # 读取训练图片的位置与文件名
 car_filename = glob.glob('vehicles/*/*.png')
@@ -541,7 +580,7 @@ else:
 # res = svc.predict(scaled_test_x)
 # print(res)
 
-test_image = cv2.imread('test6.jpg')
+test_image = cv2.imread('test3.jpg')
 orig_shape = test_image.shape   # 原图的 shape, 用于还原原图的大小
 
 lane_image = cv2.resize(test_image, (960, 540), interpolation=cv2.INTER_CUBIC)
@@ -550,11 +589,12 @@ lane_image = process_an_image(lane_image)
 # 还原大小
 lane_image = cv2.resize(lane_image, (orig_shape[1], orig_shape[0]), interpolation=cv2.INTER_CUBIC)
 
-windows = choose_window_size(test_image, x_start_stop=None, y_start__stop=y_start_stop, overlap=(0.6, 0.6))
+windows = choose_window_size(test_image, x_start_stop=None, y_start__stop=y_start_stop, overlap=(0.7, 0.6))
 box = search_windows(test_image, windows, svc, X_scaler, color__space=color_space, spatial__size=spatial_size, hist__bins=hist_bins,
                          hist__range=(0, 256), orient_=orient,
                          pix_per__cell=pix_per_cell, cell_per__block=cell_per_block,
                          hog__channel=hog_channel, spatial__feat=spatial_feat,
                          hist__feat=hist_feat, hog__feat=hog_feat)
-drawn_image = draw_boxes(lane_image, box, color=(255, 0, 0), thick=3)
-ShowImage('image', drawn_image, 1)
+# drawn_image = draw_boxes(lane_image, box, color=(255, 0, 0), thick=3)
+heat_map, labels, drawn_image = draw_labeled_windows(lane_image, box, threshold_=1)
+ShowImage('image2', drawn_image, 1)
