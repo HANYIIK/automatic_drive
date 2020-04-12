@@ -5,12 +5,12 @@ import glob
 from sklearn.svm import LinearSVC
 import time
 import pickle
-# from moviepy.editor import VideoFileClip
 # 数据前处理时用到
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 # from scipy.ndimage.measurements import label
+# from moviepy.editor import VideoFileClip
 
 
 # 高斯滤波核大小
@@ -541,7 +541,7 @@ else:
 # res = svc.predict(scaled_test_x)
 # print(res)
 
-test_image = cv2.imread('test5.jpg')
+test_image = cv2.imread('test6.jpg')
 orig_shape = test_image.shape   # 原图的 shape, 用于还原原图的大小
 
 lane_image = cv2.resize(test_image, (960, 540), interpolation=cv2.INTER_CUBIC)
