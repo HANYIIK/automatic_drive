@@ -580,14 +580,14 @@ else:
 # res = svc.predict(scaled_test_x)
 # print(res)
 
-test_image = cv2.imread('test3.jpg')
-orig_shape = test_image.shape   # 原图的 shape, 用于还原原图的大小
-
-lane_image = cv2.resize(test_image, (960, 540), interpolation=cv2.INTER_CUBIC)
-# 画车道线
-lane_image = process_an_image(lane_image)
-# 还原大小
-lane_image = cv2.resize(lane_image, (orig_shape[1], orig_shape[0]), interpolation=cv2.INTER_CUBIC)
+test_image = cv2.imread('test7.jpg')
+# orig_shape = test_image.shape   # 原图的 shape, 用于还原原图的大小
+#
+# lane_image = cv2.resize(test_image, (960, 540), interpolation=cv2.INTER_CUBIC)
+# # 画车道线
+# lane_image = process_an_image(lane_image)
+# # 还原大小
+# lane_image = cv2.resize(lane_image, (orig_shape[1], orig_shape[0]), interpolation=cv2.INTER_CUBIC)
 
 windows = choose_window_size(test_image, x_start_stop=None, y_start__stop=y_start_stop, overlap=(0.7, 0.6))
 box = search_windows(test_image, windows, svc, X_scaler, color__space=color_space, spatial__size=spatial_size, hist__bins=hist_bins,
@@ -596,5 +596,5 @@ box = search_windows(test_image, windows, svc, X_scaler, color__space=color_spac
                          hog__channel=hog_channel, spatial__feat=spatial_feat,
                          hist__feat=hist_feat, hog__feat=hog_feat)
 # drawn_image = draw_boxes(lane_image, box, color=(255, 0, 0), thick=3)
-heat_map, labels, drawn_image = draw_labeled_windows(lane_image, box, threshold_=1)
-ShowImage('image2', drawn_image, 1)
+heat_map, labels, drawn_image = draw_labeled_windows(test_image, box, threshold_=1)
+ShowImage('image3', drawn_image, 1)
