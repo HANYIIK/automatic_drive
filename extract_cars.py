@@ -590,7 +590,7 @@ test_image = cv2.imread('test11.jpg')
 # # 还原大小
 # lane_image = cv2.resize(lane_image, (orig_shape[1], orig_shape[0]), interpolation=cv2.INTER_CUBIC)
 
-windows = choose_window_size(test_image, x_start_stop=[0, 800], y_start__stop=y_start_stop, overlap=(0.6, 0.7))
+windows = choose_window_size(test_image, x_start_stop=None, y_start__stop=y_start_stop, overlap=(0.6, 0.7))
 box = search_windows(test_image, windows, svc, X_scaler, color__space=color_space, spatial__size=spatial_size, hist__bins=hist_bins,
                          hist__range=(0, 256), orient_=orient,
                          pix_per__cell=pix_per_cell, cell_per__block=cell_per_block,
