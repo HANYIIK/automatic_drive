@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 import cv2
 from skimage.feature import hog
 import glob
@@ -577,10 +578,10 @@ else:
 #                         pix_per__cell=pix_per_cell, cell_per__block=cell_per_block, hog__channel=hog_channel,
 #                         spatial__feat=spatial_feat, hist__feat=hist_feat, hog__feat=hog_feat)]
 # scaled_test_x = X_scaler.transform(test_features_2)
-# res = svc.predict(scaled_test_x)
+# res = svc.predict(scaled_test_x)ce330c19-634e9a62.jpg
 # print(res)
 
-test_image = cv2.imread('test7.jpg')
+test_image = cv2.imread('test11.jpg')
 # orig_shape = test_image.shape   # 原图的 shape, 用于还原原图的大小
 #
 # lane_image = cv2.resize(test_image, (960, 540), interpolation=cv2.INTER_CUBIC)
@@ -589,7 +590,7 @@ test_image = cv2.imread('test7.jpg')
 # # 还原大小
 # lane_image = cv2.resize(lane_image, (orig_shape[1], orig_shape[0]), interpolation=cv2.INTER_CUBIC)
 
-windows = choose_window_size(test_image, x_start_stop=None, y_start__stop=y_start_stop, overlap=(0.7, 0.6))
+windows = choose_window_size(test_image, x_start_stop=[0, 800], y_start__stop=y_start_stop, overlap=(0.6, 0.7))
 box = search_windows(test_image, windows, svc, X_scaler, color__space=color_space, spatial__size=spatial_size, hist__bins=hist_bins,
                          hist__range=(0, 256), orient_=orient,
                          pix_per__cell=pix_per_cell, cell_per__block=cell_per_block,
@@ -597,4 +598,7 @@ box = search_windows(test_image, windows, svc, X_scaler, color__space=color_spac
                          hist__feat=hist_feat, hog__feat=hog_feat)
 # drawn_image = draw_boxes(lane_image, box, color=(255, 0, 0), thick=3)
 heat_map, labels, drawn_image = draw_labeled_windows(test_image, box, threshold_=1)
-ShowImage('image3', drawn_image, 1)
+ShowImage('image7', drawn_image, 1)
+
+plt.imshow(test_image)
+plt.show()
